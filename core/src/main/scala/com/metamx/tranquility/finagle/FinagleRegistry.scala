@@ -18,6 +18,8 @@
  */
 package com.metamx.tranquility.finagle
 
+import java.net.InetSocketAddress
+
 import com.metamx.common.scala.Logging
 import com.metamx.common.scala.Predef._
 import com.metamx.common.scala.net.curator._
@@ -44,7 +46,7 @@ class FinagleRegistry(config: FinagleRegistryConfig, disco: Disco) extends Loggi
   private[this] val clients  = mutable.HashMap[String, SharedService[http.Request, http.Response]]()
 
   private[this] def mkclient(service: String) = {
-    val client = ClientBuilder()
+    var builder = ClientBuilder()
       .name(service)
       .codec(http.Http())
       .dest(Name.Bound(resolver.bind(service), "%s!%s" format(resolver.scheme, service)))
@@ -53,7 +55,10 @@ class FinagleRegistry(config: FinagleRegistryConfig, disco: Disco) extends Loggi
       .logger(FinagleLogger)
       .daemon(true)
       .failFast(config.finagleEnableFailFast)
-      .build()
+    if (config.finagleUseProxy) {
+      builder = builder.httpProxy(InetSocketAddress.createUnresolved(config.finagleProxyHost, config.finagleProxyPort) )
+    }
+    val client = builder.build()
     new SharedService(
       new ServiceProxy(client)
       {

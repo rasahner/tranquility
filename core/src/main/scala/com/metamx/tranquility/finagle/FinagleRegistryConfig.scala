@@ -23,7 +23,10 @@ import org.scala_tools.time.Imports._
 case class FinagleRegistryConfig(
   finagleHttpTimeout: Period = 90.seconds,
   finagleHttpConnectionsPerHost: Int = 2,
-  finagleEnableFailFast: Boolean = true
+  finagleEnableFailFast: Boolean = true,
+  finagleUseProxy: Boolean = false,
+  finagleProxyHost: String = "",
+  finagleProxyPort: Int = 4080
 )
 
 object FinagleRegistryConfig
@@ -49,6 +52,21 @@ object FinagleRegistryConfig
      * Whether Finagle's fail-fast behavior should be enabled.
      */
     def finagleEnableFailFast(x: Boolean) = new Builder(config.copy(finagleEnableFailFast = x))
+
+    /**
+      * Whether HTTP requests should go through a proxy
+      */
+    def finagleUseProxy(x: Boolean) = new Builder(config.copy(finagleUseProxy = x))
+
+    /**
+      * proxy host
+      */
+    def finagleProxyHost(x: String) = new Builder(config.copy(finagleProxyHost = x))
+
+    /**
+      * proxy port
+      */
+    def finagleProxyPort(x: Int) = new Builder(config.copy(finagleProxyPort = x))
 
     def build(): FinagleRegistryConfig = config
   }

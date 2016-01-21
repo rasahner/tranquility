@@ -132,10 +132,16 @@ public class JavaApiTest
                                                                              .finagleEnableFailFast(false)
                                                                              .finagleHttpTimeout(new Period(1))
                                                                              .finagleHttpConnectionsPerHost(1000)
+                                                                             .finagleUseProxy(true)
+                                                                             .finagleProxyHost ("a.b.c")
+                                                                             .finagleProxyPort(80)
                                                                              .build();
 
     Assert.assertEquals(false, finagleRegistryConfig.finagleEnableFailFast());
     Assert.assertEquals(new Period(1), finagleRegistryConfig.finagleHttpTimeout());
     Assert.assertEquals(1000, finagleRegistryConfig.finagleHttpConnectionsPerHost());
+    Assert.assertEquals(true, finagleRegistryConfig.finagleUseProxy());
+    Assert.assertEquals("a.b.c", finagleRegistryConfig.finagleProxyHost());
+    Assert.assertEquals(80, finagleRegistryConfig.finagleProxyPort());
   }
 }
